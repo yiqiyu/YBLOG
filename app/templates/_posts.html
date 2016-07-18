@@ -1,0 +1,31 @@
+﻿<ul class="posts">
+    {% for post in posts %}
+    <li class="post">
+        <div class="post-thumbnail">
+        </div>
+        <div class="post-content">
+            <div class="post-date">{{ moment(post.timestamp).format('LLL') }}</div>
+			<div class="post-title">
+				<a href="{{ url_for('.blog_post', id=post.id) }}">{{ post.title }}</a>
+			</div>
+            <div class="post-body">
+                {% if post.body_html %}
+                    {{ post.body_html | safe }}
+                {% else %}
+                    {{ post.body }}
+                {% endif %}
+            </div>
+            <div class="post-footer">
+				{% if not detail %}
+                <a href="{{ url_for('.blog_post', id=post.id) }}">
+                    <span class="label label-default">详情</span>
+                </a>
+				{% endif %}
+                <a href="{{ url_for('.blog_post', id=post.id) }}#comments">
+                    <span class="label label-primary">已有{{ post.comments.count()-1 }}条评论</span>
+                </a>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

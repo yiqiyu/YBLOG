@@ -1,0 +1,12 @@
+﻿YBLOG - 我的博客有更新啦！
+
+您好{% if name %}，{{ name }}{% endif %}！
+本次博客更新了以下文章：：
+
+{% for post in posts %}
+	{{ post.title }}   链接：
+{{ url_for('.blog_post', id=post.id, _external=True) }}
+{% endfor %}
+
+因为您订阅了我的博客所以会接收到本邮件。若需要取消订阅打开下面链接：
+{{ url_for('.unsubscribe', id=follower_id, _external=True) }}

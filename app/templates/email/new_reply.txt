@@ -1,0 +1,7 @@
+﻿YBLOG - 您的评论有一个新回复！
+
+{{ name }}回复了您的评论，请打开下面链接获得详细信息：
+{{ url_for('.blog_post', id=post_id, page=page, _anchor=comment_index+'L', _external=True) }}
+
+若需要取消回复提醒请打开下面链接：
+{{ url_for('.reply_notice_cancel', id=reply_to_id, _external=True) }}

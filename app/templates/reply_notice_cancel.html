@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}YBLOG - 取消提醒{% endblock %}
+
+{% block page_content %}
+<div class="unsubscribe">
+	<div class="info">您真的需要取消本条评论的回复提醒吗？</div>
+	<a class="btn btn-default btn-xs" href="{{ url_for('.reply_notice_cancel',id=id, notice_cancel=True) }}">确认</a>
+</div>
+{% endblock %}

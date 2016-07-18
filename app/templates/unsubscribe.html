@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}YBLOG - 取消订阅{% endblock %}
+
+{% block page_content %}
+<div class="unsubscribe">
+	<div class="info">您真的需要取消本博客的订阅吗？</div>
+	<a class="btn btn-default btn-xs" href="{{ url_for('.unsubscribe',id=id, unsubscribe=True) }}">确认</a>
+</div>
+{% endblock %}

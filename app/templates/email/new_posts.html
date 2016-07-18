@@ -1,0 +1,22 @@
+{% extends "email/mail_base.html" %}
+
+{% block title %}YBLOG - 我的博客有更新啦{% endblock %}
+
+{% block page_content %}
+<div class="post">
+	<h3>我的博客有更新啦</h3>
+	<p class="info">
+	您好{% if name %}，{{ name }}{% endif %}！
+	本次博客更新了以下文章：
+	</p>
+	{% for post in posts %}
+	<div class="post">
+		<a href="{{ url_for('.blog_post', id=post.id, _external=True) }}">{{ post.title }}</a>
+	{% endfor %}
+</div>
+<div class="unsubscribe">
+	<p>因为您订阅了我的博客所以会接收到本邮件。若需要取消订阅请
+	<a href="{{ url_for('.unsubscribe', id=follower_id, _external=True) }}">点击此处</a>。
+	</p>
+</div>
+{% endblock %}

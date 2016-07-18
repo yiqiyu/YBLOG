@@ -1,0 +1,19 @@
+<ul class="messages">
+    {% for message in messages %}
+    <li class="message">
+        <div class="message-thumbnail">
+        </div>
+        <div class="message-content">
+            <div class="message-date">{{ moment(message.timestamp).format('LLL') }}</div>
+			<div class="message-author">{{ message.author_name }}</div>
+            <div class="message-body">
+                {% if message.body_html %}
+                    {{ message.body_html | safe }}
+                {% else %}
+                    {{ message.body }}
+                {% endif %}
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

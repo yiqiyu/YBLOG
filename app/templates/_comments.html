@@ -1,0 +1,40 @@
+<ul class="comments" id="comments">
+	<h3>评论区</h3>
+    {% for comment in comments %}
+	{% if comment.body %}
+    <li class="comment">
+        <div class="comment-thumbnail">
+        </div>		
+        <div class="comment-content" name="stair-{{ comment.comment_index }}" id="{{ comment.comment_index }}L">
+            <div class="comment-date">{{ moment(comment.timestamp).format('LLL') }}</div>
+            <div class="comment-author">{{ comment.author_name }}</div>		
+            <div class="comment-body">
+                {% if comment.disabled %}
+                <p><i>该评论已被屏蔽</i></p>
+                {% elif not comment.disabled %}
+                    {% if comment.body_html %}
+                        {{ comment.body_html | safe }}
+                    {% else %}
+                        {{ comment.body }}
+                    {% endif %}
+                {% endif %}
+            </div>	
+			{% if comment.reply_to.body %}
+			<div class="reply">
+				<blockquote>
+					<span>{{comment.reply_to.author_name}}：</span><br />
+					“<br />
+					{{comment.reply_to.body}}
+					<br />“
+					<div class="comment-index">#{{ comment.reply_to.comment_index }}</div>
+				</blockquote>
+			</div>
+			{% endif %}
+			<div class="comment-index">#{{ comment.comment_index }}</div>
+			<a class="btn btn-default btn-xs" id="{{ comment.id }}" 
+				href="{{ url_for('.reply',id=comment.id) }}">回复</a>
+        </div>	
+    </li>
+	{% endif %}
+    {% endfor %}
+</ul>
