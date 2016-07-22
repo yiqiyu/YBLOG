@@ -1,0 +1,5 @@
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger pin code: 3INFO:werkzeug: * Restarting with stat
+INFO:werkzeug: * Restarting with stat
+o quit)
+INFO:werkzeug: * Detected change in 'C:\\Users\\Administrator\\Desktop\\python\\blog\\app\\main\\views.py', reloading

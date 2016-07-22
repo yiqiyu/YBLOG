@@ -4,15 +4,19 @@
 
 {% block title %}YBLOG - Message Board{% endblock %}
 
-{% block page_content %}
-<div class="page-header">
-    <h1>留言</h1>
+{% block post_content %}
+
+<div class="page-header text-center bg-2">
+    <h1>留言板</h1>
 	<h2>欢迎大家留下对于本博客或本人的建议~</h2>
 </div>
-<div class="comment-form">
-    {{ wtf.quick_form(form) }}
+<div class="container">
+  <div class=" comment-form form">
+    {{ wtf.quick_form(form) }} 
+  </div>
+  {% include '_messages.html' %}  
 </div>
-{% include '_messages.html' %}
+
 {% if pagination %}
 <div class="pagination">
     {{ macros.pagination_widget(pagination, '.message_board') }}

@@ -5,7 +5,7 @@ Created on Thu Jun 23 21:43:00 2016
 @author: Administrator
 """
 import traceback
-import logging
+#import logging
 
 from flask import render_template, redirect, url_for, abort, flash, request,\
     current_app, g
@@ -21,9 +21,9 @@ from ..models import Follower, Comment, Post, Message
 
 
 DEFAULT_REPLY_TO_ID = 1
-logging.basicConfig(level=logging.INFO,  
-                    filename='./log/test.log',  
-                    filemode='w')  
+#logging.basicConfig(level=logging.INFO,  
+#                    filename='./log/test.log',  
+#                    filemode='w')  
 
 
 def add_otherwise_rollback(entity, message):
@@ -31,16 +31,18 @@ def add_otherwise_rollback(entity, message):
         db.session.add(entity)
         db.session.commit()
         flag = True
+        category = 'info'
     except:
         db.session.rollback()
         message = u'Oops...我们的服务器貌似出了点问题，请重试'
+        category = 'error'
         flag = False
         if current_app.debug is True or current_app.testing is True:
             with open("./log/log.txt",'a') as f:
                 traceback.print_exc(file=f)
                 f.flush()
     finally:
-        flash(message)
+        flash(message, category)
         return flag
 
 
@@ -142,7 +144,8 @@ def blog_post(id):
                           email=form.email.data,
                           reply_to=default_reply_to,
                           comment_index=comment_index,
-                          author_name=form.name.data)
+                          author_name=form.name.data,
+                          email_remind=form.email_remind.data)
         add_otherwise_rollback(comment, u'你的评论已被提交。')
         return redirect(url_for('.blog_post', id=post.id, page=-1))
         
@@ -175,7 +178,8 @@ def reply(id):
                           reply_to=reply_to,
                           body=form.body.data,
                           email=form.email.data,
-                          author_name=form.name.data)
+                          author_name=form.name.data,
+                          email_remind=form.email_remind.data)
         if add_otherwise_rollback(comment, u'您的回复已被提交。') and \
             reply_to.email_remind:
             page = (post.comments.count() - 2) // \

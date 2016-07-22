@@ -12,41 +12,61 @@ type="image/x-icon">
 
 {% block navbar %}
 
-<div class="navbar navbar-inverse" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">YBLOG</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.index') }}">Home</a></li>
-				<li><a href="{{ url_for('main.message_board') }}">Message Board</a></li>
-            </ul>
-        </div>
+<div class="navbar navbar-inverse " role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{ url_for('main.index') }}">YBLOG</a>
     </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="{{ url_for('main.index') }}">Home</a></li>
+    <li><a href="{{ url_for('main.message_board') }}">Message Board</a></li>
+      </ul>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{ message }}
-    </div>
-    {% endfor %}
-
-    {% block page_content %}{% endblock %}
+<div class="container flash">
+  {% for message in get_flashed_messages() %}
+  <div class="alert alert-info fade in">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ message }}
+  </div>
+  {% endfor %}
 </div>
+
+<div class="container">
+  {% block page_content %}{% endblock %}
+</div>
+
+{% block post_content %}{% endblock %}
+
+<footer class="container-fluid bg-4 text-center">
+  <h2>Powered by Bootstrap</h2>
+  <p><span class="glyphicon glyphicon-leaf"></span> Visit my Git for more: 
+    <a href="http://www.github.com/yiqiyu" target="_blank">
+      git@github:yiqiyu
+    </a>
+  </p>
+  <p> <span class="glyphicon glyphicon-envelope"></span> Contact me: <a href="mailto:dante3@126.com">dante3@126.com</a></p>
+</footer>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
+<script  type="text/javascript" src="{{ url_for('static', filename = 'js/jquery.autosize.min.js') }}"></script>
+<script>
+    $(function(){
+	    $('textarea').autosize();
+    });
+</script>
 {{ moment.include_moment() }}
 {% endblock %}

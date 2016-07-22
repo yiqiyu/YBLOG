@@ -3,27 +3,38 @@
 {% import "_macros.html" as macros %}
 {% from "bootstrap/pagination.html" import render_pagination %}
 
-
 {% block title %}YBLOG{% endblock %}
 
-{% block page_content %}
-<div class="page-header">
-    <h1>Welcome to YBLOG!</h1>
-	<h2>Hello, my name is Yiqi, a self-taught developer.</h2>
+{% block post_content %}
+<div class="page-header text-center bg-2">
+  <h1>Welcome to YBLOG!</h1>
+  <img src="{{ url_for('static', filename = 'title.jpg') }}" class="me-img img-responsive img-circle margin" alt="me">
+  <h2>Hello, I'm Yiqi, a self-taught developer.</h2>
 </div>
-<div class="subscribe">
-	<div><h5> 订阅我的博客 </h5></div>
-	{{ wtf.quick_form(subscribeForm) }}
+<div class="container">
+  <div class="row">
+    <div class="col-md-9">
+      <div class="post">
+        <div class="post-tabs">
+          {% include '_posts.html' %}
+        </div>
+      </div>
+	  {% if pagination %}
+      <div class="pagination text-center">
+        <!--{{ macros.pagination_widget(pagination, '.index') }}-->
+        {{ render_pagination(pagination, endpoint='.index') }}
+      </div>
+      {% endif %}
+    </div>
+    <div class="col-md-3">
+      <div class="subscribe shadow frame" data-spy="affix" data-offset-top="611">
+        <h3><b><span class="glyphicon glyphicon-pushpin"></span> 订阅我的博客 </b></h3>
+        {{ wtf.quick_form(subscribeForm) }}
+      </div>
+    </div>
+  </div>
+
 </div>
-<div class="post-tabs">
-    {% include '_posts.html' %}
-</div>
-{% if pagination %}
-<div class="pagination">
-    <!--{{ macros.pagination_widget(pagination, '.index') }}-->
-	{{ render_pagination(pagination, endpoint='.index') }}
-</div>
-{% endif %}
 {% endblock %}
 
 {% block scripts %}

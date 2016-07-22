@@ -4,10 +4,11 @@
 {% block title %}YBLOG - 回复{% endblock %}
 
 {% block page_content %}
-<h4 id="comments">回复</h4>
+
 <div class="ajax-reply">
-	<div class="comment-form">
-		{{ wtf.quick_form(form, action=url_for('.reply', id=reply_to.id)) }}
-	</div>
+  <div class="comment-form form">
+    <h4 id="comments"><span class="glyphicon glyphicon-pencil"></span><b>回复该楼</b></h4>
+    {{ wtf.quick_form(form, action=url_for('.reply', id=reply_to.id)) }}
+  </div>
 </div>
 {% endblock %}

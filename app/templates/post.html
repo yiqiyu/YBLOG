@@ -4,30 +4,33 @@
 
 {% block head %}
 {{ super() }}
-<script type="text/javascript" src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
 <script type="text/javascript" src="{{ url_for('static', filename = 'js/sijax/sijax.js') }}"></script>
 <script type="text/javascript">
-    {{ g.sijax.get_js()|safe }}
+  {{ g.sijax.get_js()|safe }}
 </script>
 {% endblock %}
 
 {% block title %}YBLOG - {{ posts[0].title }}{% endblock %}
 
-{% block page_content %}
-{% set detail = true %}
-{% include '_posts.html' %}
-{% include '_comments.html' %}
-{% if pagination %}
-<div class="pagination">
+{% block post_content %}
+<div class="container">
+  {% set detailed = true %}
+  {% include '_posts.html' %}
+  {% include '_comments.html' %}
+  {% if pagination %}
+  <div class="pagination">
     {{ macros.pagination_widget(pagination, '.blog_post', fragment='#comments', id=posts[0].id) }}
-</div>
-{% endif %}
-<h4 id="comments">评论</h4>
-<div class="comment-form">
+  </div>
+  {% endif %}
+
+  <div class="comment-form form">
+    <h3 id="comments"><span class="glyphicon glyphicon-pencil"></span> 发表评论</h3>
     {{ wtf.quick_form(form, action=url_for('.blog_post', id=posts[0].id)) }}
+  </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/reply_toggle.js', _external=True) }}"></script>
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/reply_toggle.js') }}"></script>
 {%- endblock scripts %}

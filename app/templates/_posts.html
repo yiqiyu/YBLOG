@@ -1,31 +1,35 @@
-﻿<ul class="posts">
-    {% for post in posts %}
-    <li class="post">
-        <div class="post-thumbnail">
-        </div>
-        <div class="post-content">
-            <div class="post-date">{{ moment(post.timestamp).format('LLL') }}</div>
-			<div class="post-title">
-				<a href="{{ url_for('.blog_post', id=post.id) }}">{{ post.title }}</a>
-			</div>
-            <div class="post-body">
-                {% if post.body_html %}
-                    {{ post.body_html | safe }}
-                {% else %}
-                    {{ post.body }}
-                {% endif %}
-            </div>
-            <div class="post-footer">
-				{% if not detail %}
-                <a href="{{ url_for('.blog_post', id=post.id) }}">
-                    <span class="label label-default">详情</span>
-                </a>
-				{% endif %}
-                <a href="{{ url_for('.blog_post', id=post.id) }}#comments">
-                    <span class="label label-primary">已有{{ post.comments.count()-1 }}条评论</span>
-                </a>
-            </div>
-        </div>
-    </li>
-    {% endfor %}
+<ul class="posts">
+  {% for post in posts %}
+  <li class="post shadow frame">
+    <div class="post-thumbnail">
+    </div>
+    <div class="post-content">
+      <div class="post-title">
+        <h1><a href="{{ url_for('.blog_post', id=post.id) }}">{{ post.title }}</a></h1>
+      </div>
+	  <div class="post-date"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>{{ moment(post.timestamp).format('LLL') }}</div>
+      <div class="post-body">
+        {% if post.body_html %}
+          {{ post.body_html | safe }}
+        {% else %}
+          {{ post.body }}
+        {% endif %}
+      </div>
+      <div class="post-footer">
+      {% if not detailed %}
+        <a href="{{ url_for('.blog_post', id=post.id) }}">
+          <span class="label label-default">详情</span>
+        </a>
+	  {% else %}
+	    <a href="{{ url_for('.index') }}">
+          <span class="label label-default">返回主页<span class=" glyphicon glyphicon-log-out" aria-hidden="true"></span></span>
+        </a>
+      {% endif %}
+        <a href="{{ url_for('.blog_post', id=post.id) }}#comments">
+          <span class="label label-primary">已有{{ post.comments.count()-1 }}条评论</span>
+        </a>
+      </div>
+    </div>
+  </li>
+  {% endfor %}
 </ul>

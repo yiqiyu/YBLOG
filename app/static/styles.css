@@ -1,32 +1,59 @@
-div.subscribe {
-	float: right;
+@import url(typography.css);
+@import url(color.css);
+
+
+.btn {
+    float: right;
 }
+form {
+    padding-bottom: 30px;
+}
+.container-fluid {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.shadow {
+	box-shadow: 5px 5px 20px #CCC;
+}
+.frame {
+	border-radius: 6px;
+}
+
+
+div.subscribe {
+	margin: 10px 20px 20px;
+	padding: 10px 20px 20px;
+    border-radius: 6px;
+}
+.subscribe h3 {
+   padding: 5px 0 15px;
+   border-bottom: 1px solid #e0e0e0;
+   margin-bottom: 20px;
+}
+.affix {
+   top: 20px;
+   width: 222.5px;
+}
+
 div.post-tabs {
-    margin-top: 16px;
-	width: 75%;
+    margin-top: 0px;
 }
 ul.posts {
     list-style-type: none;
     padding: 0px;
-    margin: 16px 0px 0px 0px;
-    border-top: 1px solid #e0e0e0;
 }
 div.post-tabs ul.posts {
-    margin: 0px;
+    margin: 10px 0px;
     border-top: none;
 }
 ul.posts li.post {
-    padding: 8px;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 30px 20px 20px 0px;
+    border: 1px solid #e0e0e0;
+	margin-bottom: 30px;
 }
 ul.posts li.post:hover {
-    background-color: #f0f0f0;
-}
-div.post-date {
-    float: right;
-}
-div.post-author {
-    font-weight: bold;
+    box-shadow: rgb(108, 105, 105) 5px 5px 20px;
 }
 div.post-thumbnail {
     position: absolute;
@@ -35,73 +62,140 @@ div.post-content {
     margin-left: 48px;
     min-height: 48px;
 }
-div.post-footer {
-    text-align: right;
+.post-body {
+    border-top: 1px solid #e0e0e0;
+	margin-top: 20px
+}
+
+/*comment body*/
+ul.comments, 
+div.comment-form{
+    width: 90%;
+	margin-left: auto;
+    margin-right: auto;
 }
 ul.comments {
+    margin-top: 40px;	
     list-style-type: none;
     padding: 0px;
-    margin: 16px 0px 0px 0px;
+    border-radius: 6px;
 }
 ul.comments li.comment {
-    margin-left: 32px;
-    padding: 8px;
     border-bottom: 1px solid #e0e0e0;
+	border-radius: 0px;
 }
 ul.comments li.comment:nth-child(1) {
     border-top: 1px solid #e0e0e0;
 }
-ul.comments li.comment:hover {
-    background-color: #f0f0f0;
-}
 div.comment-date {
     float: right;
-}
-div.comment-author {
-    font-weight: bold;
 }
 div.comment-thumbnail {
     position: absolute;
 }
 div.comment-content {
-    margin-left: 48px;
+    padding: 30px 30px 60px;
     min-height: 48px;
 }
-div.comment-form {
-    margin: 16px 0px 16px 32px;
+
+.comment-author, 
+blockquote span {
+    margin-bottom: 10px;
 }
+.comment-body {
+    margin-bottom: 8px;
+}
+blockquote {
+    border: 1px solid #e0e0e0;
+}
+
+
+textarea.form-control {
+	-webkit-transition: height 0.2s;
+	   -moz-transition: height 0.2s;
+	        transition: height 0.2s;
+}
+
+
+/*comment form*/
+div.form input.form-control {
+    width: 40%;
+	float: left;
+}
+.form label.control-label[for="body"] {
+    display: none;
+}
+div.comment-form form {
+    padding: 10px 30px;
+}
+div.form label.control-label {
+    padding: 5px 5px;
+	margin: 0;
+}
+div.comment-form {
+    margin-top: 16px; 
+	margin-bottom: 48px;
+}
+div.checkbox { 
+	position: relative;
+	top: 10px;
+	display: inline;
+}
+
+/*reply form in post page*/
+div.replyToggle .form {
+    width: 100%;
+    margin-top: 28px;
+	margin-bottom: 0px;
+	padding: 0;
+}
+
+/*message form*/
+.messages {
+    width: 100%;
+}
+
 div.pagination {
-    width: 75%;
+    width: 100%;
+	margin: 10px auto;
     text-align: center;
     padding: 0px;
-    margin: 0px;
 }
-ul.comments + div.pagination {
-	width: 100%;
-}
+
+
 div.flask-pagedown-preview {
     margin: 10px 0px 10px 0px;
     border: 1px solid #e0e0e0;
     padding: 4px;
 }
-div.flask-pagedown-preview h1 {
-    font-size: 140%;
-}
-div.flask-pagedown-preview h2 {
-    font-size: 130%;
-}
-div.flask-pagedown-preview h3 {
-    font-size: 120%;
-}
-.post-body h1 {
-    font-size: 140%;
-}
-.post-body h2 {
-    font-size: 130%;
-}
-.post-body h3 {
-    font-size: 120%;
-}
+
+
 .table.followers tr {
     border-bottom: 1px solid #e0e0e0;
+}
+
+
+.page-header {
+	padding-top: 20px;
+	margin: 0 0 20px;
+}
+
+.margin {
+	margin-top: 15px;
+	margin-bottom: 35px;
+}
+	
+.navbar {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+
+.me-img {
+     display:inline;
+	 width: 200;
+	 height: 200;
 }

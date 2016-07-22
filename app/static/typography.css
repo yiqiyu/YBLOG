@@ -1,0 +1,64 @@
+h1,h2,h3,h4,h5 {
+	font-weight: bold;
+}
+div.flask-pagedown-preview h1 {
+    font-size: 140%;
+}
+div.flask-pagedown-preview h2 {
+    font-size: 130%;
+}
+div.flask-pagedown-preview h3 {
+    font-size: 120%;
+}
+.navbar-brand {
+    font-size: 27px;
+}
+p {font-size: 16px;}
+.navbar {
+    font-size: 20px;
+	letter-spacing: 2px;
+}
+div.comment-author {
+    font-weight: bold;
+}
+.post-body h1,h2,h3,h4,h5 {
+    font-weight: normal;
+}
+.post-body h1 {
+    font-size: 140%;
+}
+.post-body h2 {
+    font-size: 130%;
+}
+.post-body h3 {
+    font-size: 120%;
+}
+div.post-footer {
+   text-align: right;
+}
+.subscribe h3 {
+   font-weight: bold;
+}
+.comments .glyphicon {
+    color: #69c7ff;
+}
+.comment-author, blockquote span{
+    color: #aaa;
+	font-size: 17px;
+}
+div.comment-content {
+    font-size: 15px;
+	color: #333;
+}
+blockquote {
+    font-size: 15px;
+}
+.form .glyphicon{
+    color: #268e28;
+}
+div.form label.control-label {
+    font-weight: normal;
+}
+div.comment-content .form {
+    font-size: 14px;
+}

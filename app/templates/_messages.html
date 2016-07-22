@@ -1,12 +1,13 @@
-<ul class="messages">
+<ul class="comments messages">
+    <h3><span class="glyphicon glyphicon-comment"></span> 留言区</h3>
     {% for message in messages %}
-    <li class="message">
-        <div class="message-thumbnail">
+    <li class="comment frame shadow">
+        <div class="comment-thumbnail">
         </div>
-        <div class="message-content">
-            <div class="message-date">{{ moment(message.timestamp).format('LLL') }}</div>
-			<div class="message-author">{{ message.author_name }}</div>
-            <div class="message-body">
+        <div class="comment-content">
+            <div class="comment-date">{{ moment(message.timestamp).format('LLL') }}</div>
+			<div class="comment-author">{{ message.author_name }}</div>
+            <div class="comment-body">
                 {% if message.body_html %}
                     {{ message.body_html | safe }}
                 {% else %}
