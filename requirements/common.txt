@@ -9,6 +9,7 @@ Flask-Migrate==1.8.0
 Flask-Moment==0.5.1
 Flask-PageDown==0.2.1
 Flask-Script==2.0.5
+Flask-Sijax==0.4.1
 Flask-SQLAlchemy==2.1
 Flask-WTF==0.12
 itsdangerous==0.24
@@ -22,4 +23,4 @@ werkzeug==0.11.4
 WTForms==2.1
 html5lib==0.9999999
 Flask-HTTPAuth==3.0.0
-Sijax==0.4.1
+Sijax==0.3.2
