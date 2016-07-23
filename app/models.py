@@ -78,7 +78,10 @@ class Post(db.Model):
             with codecs.open(os.path.join(blog_dir, post), encoding='utf-8') as f:
                 file_name = os.path.splitext(post)[0].split("-")
                 id = int(file_name[0])
-                title = file_name[1].decode('gb2312').encode('utf-8')
+                if current_app.debug is True or current_app.testing is True:
+                    title = file_name[1].decode('gb2312').encode('utf-8')
+                else:
+                    title = file_name[1]
                 new_posts.append(id)
                 body = f.read()
 #                print chardet.detect(title)
