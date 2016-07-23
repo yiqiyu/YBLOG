@@ -22,7 +22,7 @@ werkzeug==0.11.4
 WTForms==2.1
 html5lib==0.9999999
 Flask-HTTPAuth==3.0.0
-Sijax==0.4.1
+Sijax==0.3.2
 Flask-SSLify==0.1.5
 gunicorn==18.0
 psycopg2==2.5.1
