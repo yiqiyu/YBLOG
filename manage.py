@@ -5,7 +5,6 @@ Created on Mon Jun 20 22:17:37 2016
 @author: Administrator
 """
 
-import traceback
 import os
 COV = None
 if os.environ.get('FLASK_COVERAGE'):
@@ -31,11 +30,7 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def add_post():
-    try:
-        Post.add_post()
-    except:
-        db.session.rollback()
-        traceback.print_exc()
+    Post.add_post_secured()
 
 
 @manager.command
@@ -75,7 +70,9 @@ def deploy():
     from flask.ext.migrate import upgrade
     # migrate database to latest revision
     upgrade()
-
+    
+    #add blogs
+    Post.add_post_secured()
 
 
 if __name__ == '__main__':

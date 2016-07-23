@@ -4,6 +4,7 @@ Created on Wed Jun 22 18:28:11 2016
 
 @author: Administrator
 """
+import traceback
 import os
 import codecs
 
@@ -89,6 +90,14 @@ class Post(db.Model):
                        'email/new_posts', posts=[Post.query.get(id) for id in new_posts],
                        name=follower.name,
                        follower_id=follower.id)
+                       
+    @staticmethod
+    def add_post_secured():
+        try:
+            Post.add_post()
+        except:
+            db.session.rollback()
+            traceback.print_exc()
     
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
