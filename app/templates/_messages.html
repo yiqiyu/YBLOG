@@ -1,20 +1,27 @@
 <ul class="comments messages">
-    <h3><span class="glyphicon glyphicon-comment"></span> 留言区</h3>
+  <h3><span class="glyphicon glyphicon-comment"></span> 留言区</h3>
+  {% if messages|length > 0 %} 
     {% for message in messages %}
-    <li class="comment frame shadow">
-        <div class="comment-thumbnail">
+	<li class="comment frame shadow">
+      <div class="comment-thumbnail"></div>
+      <div class="comment-content">
+        <div class="comment-date">{{ moment(message.timestamp).format('LLL') }}</div>
+          <div class="comment-author">{{ message.author_name }}</div>
+        <div class="comment-body">
+          {% if message.body_html %}
+            {{ message.body_html | safe }}
+          {% else %}
+            {{ message.body }}
+          {% endif %}
         </div>
-        <div class="comment-content">
-            <div class="comment-date">{{ moment(message.timestamp).format('LLL') }}</div>
-			<div class="comment-author">{{ message.author_name }}</div>
-            <div class="comment-body">
-                {% if message.body_html %}
-                    {{ message.body_html | safe }}
-                {% else %}
-                    {{ message.body }}
-                {% endif %}
-            </div>
-        </div>
-    </li>
+      </div>
+	</li> 
     {% endfor %}
+  {% else %}
+  <li class="comment frame shadow">
+	<div class="comment-body">
+	  <p>还没有人留言，快来抢沙发吧~</p>
+	</div>
+  </li>
+  {% endif %}
 </ul>
