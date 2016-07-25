@@ -155,7 +155,7 @@ db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 
 
 class Message(db.Model):
-    __tablename__ = 'main_page_comments'
+    __tablename__ = 'messages'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
