@@ -30,7 +30,12 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def add_post():
-    Post.add_post_secured()
+    Post.add_post()
+
+
+@manager.command
+def update_post():
+    Post.update_post()
 
 
 @manager.command
@@ -72,7 +77,7 @@ def deploy():
     upgrade()
     
     #add blogs
-    Post.add_post_secured()
+    Post.add_post()
 
 
 if __name__ == '__main__':

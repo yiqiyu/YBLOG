@@ -1,12 +1,11 @@
 $(function() {
-		$("a.btn").click(
-			function(){
-				replyToggle(this);
-				return false;
-			}
-		)
-	}
-)
+	$("a.btn").click(
+		function(){
+			replyToggle(this);
+			return false;
+		}
+	);
+})
 	
 
 function replyToggle(that){
@@ -25,3 +24,4 @@ function replyToggle(that){
 		$('div.replyToggle').slideUp("fast", function(){$(this).remove()});
 		}	
 }
+

@@ -7,6 +7,7 @@ Created on Wed Jun 22 18:28:11 2016
 import traceback
 import os
 import codecs
+import functools
 
 from datetime import datetime
 from markdown import markdown
@@ -16,6 +17,17 @@ from app.exceptions import ValidationError
 
 from . import db
 from email import send_email
+
+
+def db_rollback_if_fail(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kw):
+        try:
+            func(*args, **kw)
+        except:
+            db.session.rollback()
+            traceback.print_exc()
+    return wrapper
 
 
 class Follower(db.Model):
@@ -62,18 +74,18 @@ class Post(db.Model):
     def on_changed_body(target, value, oldvalue, initiator):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p']
+                        'h1', 'h2', 'h3', 'p', 'img', 'br','hr']
+        allowed_attributes=['href', 'alt', 'src']
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
-            tags=allowed_tags, strip=True))
+            tags=allowed_tags, attributes=allowed_attributes, strip=False))
+
+    @staticmethod
+    def get_id(post):
+        return (lambda x: int(os.path.splitext(x)[0].split("-")[0]))(post)
             
     @staticmethod
-    def add_post():
-        blog_dir = current_app.config['BLOG_POSTS_DIR']
-        get_id = lambda x: int(os.path.splitext(x)[0].split("-")[0])
-        posts = [post for post in os.listdir(blog_dir)\
-                if not Post.query.get(get_id(post))]
-        new_posts = []
+    def _parse_post_and_commit(blog_dir, posts):
         for post in posts:
             with codecs.open(os.path.join(blog_dir, post), encoding='utf-8') as f:
                 file_name = os.path.splitext(post)[0].split("-")
@@ -82,26 +94,36 @@ class Post(db.Model):
                     title = file_name[1].decode('gb2312').encode('utf-8')
                 else:
                     title = file_name[1]
-                new_posts.append(id)
                 body = f.read()
 #                print chardet.detect(title)
                 db.session.add(Post(id=id, title=title, body=body))
         db.session.commit()
+         
+    @staticmethod
+    @db_rollback_if_fail  
+    def add_post():
+        blog_dir = current_app.config['BLOG_POSTS_DIR']
+        posts = [post for post in os.listdir(blog_dir)\
+                if not Post.query.get(Post.get_id(post))]
+        new_posts_ids = [Post.get_id(post) for post in posts]
+        Post._parse_post_and_commit(blog_dir, posts)
         #邮件通知关注者有更新
         for follower in Follower.query.all():
             send_email(follower.email, u"您关注的博客有新更新啦！", 
-                       'email/new_posts', posts=[Post.query.get(id) for id in new_posts],
+                       'email/new_posts', posts=[Post.query.get(id) for id in new_posts_ids],
                        name=follower.name,
                        follower_id=follower.id)
-                       
+
     @staticmethod
-    def add_post_secured():
-        try:
-            Post.add_post()
-        except:
-            db.session.rollback()
-            traceback.print_exc()
-    
+    @db_rollback_if_fail
+    def update_post():
+        blog_dir = current_app.config['BLOG_POSTS_DIR']
+        #如果没在目录里出现的博文将被删除
+        to_be_deleted = set(post.id for post in Post.query.all())
+        for pid in to_be_deleted:
+            db.session.delete(Post.query.get(pid))
+        Post._parse_post_and_commit(blog_dir, os.listdir(blog_dir)) 
+
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 
