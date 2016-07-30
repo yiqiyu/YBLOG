@@ -1,3 +1,3 @@
 # YBLOG
 my blog project with flask    
-[](https://yyqblog.herokuapp.com/)
+[visit me: https://yyqblog.herokuapp.com/](https://yyqblog.herokuapp.com/)
