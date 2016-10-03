@@ -13,10 +13,10 @@
 {% block title %}YBLOG - {{ posts[0].title }}{% endblock %}
 
 {% block post_content %}
-<div class="container">
+<div class="container detail-post">
   {% set detailed = true %}
-  {% include '_posts.html' %}
-  {% include '_comments.html' %}
+  {% include '_posts.html' with context %}
+  {% include '_comments.html' with context %}
   {% if pagination %}
   <div class="pagination">
     {{ macros.pagination_widget(pagination, '.blog_post', fragment='#comments', id=posts[0].id) }}

@@ -41,3 +41,9 @@ class ReplyForm(CommentForm):
 class MessageForm(BasicForm):
     body = TextAreaField(u'留言内容', validators=[Required()], render_kw={'placeholder': u'说点什么吧...'})
     submit = SubmitField(u'提交')
+
+
+class AdminForm(Form):
+    body = TextAreaField(u'回复', validators=[Required()], render_kw={'placeholder': u'说点什么吧...'})
+    email_remind = BooleanField(u'有人回复时邮件通知我', default="checked")
+    submit = SubmitField(u'提交')

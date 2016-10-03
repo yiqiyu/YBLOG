@@ -7,7 +7,13 @@
       <div class="comment-thumbnail"></div>    
       <div class="comment-content" name="stair-{{ comment.comment_index }}" id="{{ comment.comment_index }}L">
         <div class="comment-date">{{ moment(comment.timestamp).format('LLL') }}</div>
-        <div class="comment-author">#{{ comment.comment_index }} {{ comment.author_name }}</div>    
+        <div class="comment-author">#{{ comment.comment_index }} {{ comment.author_name }}</div>
+        {% if current_user.is_authenticated %}
+        <div class="comment-email">{{ comment.email }}</div>
+		<div class="comment-delete">
+		    <a href="{{url_for("auth.delete_comment", id=comment.id)}}">删除</a>
+		</div>
+        {% endif %}    
         <div class="comment-body">
           {% if comment.disabled %}
           <p><i>该评论已被屏蔽</i></p>
@@ -37,7 +43,7 @@
   <li class="comment frame shadow">
     <div class="comment-content">
 	  <div class="comment-body">
-	    <p>还没有人留言，快来抢沙发吧~</p>
+	    <p><span class="glyphicon glyphicon-send"></span> 还没有人留言，快来抢沙发吧~</p>
 	  </div>
 	</div>
   </li>

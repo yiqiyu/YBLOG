@@ -13,7 +13,7 @@ if os.environ.get('FLASK_COVERAGE'):
     COV.start()
 
 from app import create_app, db
-from app.models import Follower, Comment, Post
+from app.models import Follower, Comment, Post, Message, Administrator
 from flask.ext.script import Manager, Shell
 from flask.ext.migrate import Migrate, MigrateCommand
 
@@ -23,7 +23,8 @@ migrate = Migrate(app, db)
 
 #帮shell自动载入应用的上下文
 def make_shell_context():
-    return dict(app=app, db=db, Follower=Follower, Comment=Comment, Post=Post)
+    return dict(app=app, db=db, Follower=Follower, Comment=Comment, Post=Post, 
+                Message=Message, Admin=Administrator)
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
@@ -78,6 +79,13 @@ def deploy():
     
     #add blogs
     Post.add_post()
+    
+    #add admin
+    if not Administrator.query.all():
+        pwd = os.environ.get['ADMIN_PWD'] or '1111'
+        admin = Administrator(pwd)
+        db.session.add(admin)
+        db.session.commit()
 
 
 if __name__ == '__main__':
