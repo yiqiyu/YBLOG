@@ -82,7 +82,7 @@ def deploy():
     
     #add admin
     if not Administrator.query.all():
-        pwd = os.environ.get['ADMIN_PWD'] or '1111'
+        pwd = os.environ.get('ADMIN_PWD') or '1111'
         admin = Administrator(pwd)
         db.session.add(admin)
         db.session.commit()
