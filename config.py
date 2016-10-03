@@ -8,7 +8,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 dbconn = "mysql://root:password@localhost/"
 
-from my_pwd import USER, PWD
+
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'say you love me'
@@ -16,8 +16,8 @@ class Config:
     MAIL_SERVER = 'smtp.126.com'
     MAIL_PORT = 25
     MAIL_USE_TLS = True
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or USER
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or PWD
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME') 
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') 
     BLOG_MAIL_SUBJECT_PREFIX = '[YBLOG]'
     BLOG_MAIL_SENDER = 'YBLOG <dante3@126.com>'
     BLOG_ADMIN = os.environ.get('YBLOG_ADMIN') or "YBOLG ADMIN"
