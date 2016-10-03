@@ -4,14 +4,9 @@
 
 {% block page_content %}
 <div class="new_reply">
-	<h3>您在我的博客评论中有一个新回复！</h3>
+	<h3>您的博客有一个新回复！</h3>
 	<p class="info">
-	{{ name }}回复了您的评论，请
+	{{ name }}回复了您的博客，请
 	<a href="{{ url_for('.blog_post', id=post_id, page=page, _anchor=comment_index+'L', _external=True)}}">点击此处</a>获得详细信息。
 	</p>
-<div class="reply_notice_cancel">
-	<p>若需要取消本条回复提醒请
-	<a href="{{ url_for('.reply_notice_cancel', id=reply_to_id, _external=True) }}">点击此处</a>
-	</p>
-</div>
 {% endblock %}

@@ -1,0 +1,12 @@
+{% extends "email/mail_base.html" %}
+
+{% block title %}YBLOG - 您有一个新留言{% endblock %}
+
+{% block page_content %}
+<div class="new_reply">
+	<h3>您的博客有一个新留言！</h3>
+	<p class="info">
+	{{ name }}回复了您的博客，请
+	<a href="{{ url_for('.message_board', _external=True)}}">点击此处</a>获得详细信息。
+	</p>
+{% endblock %}

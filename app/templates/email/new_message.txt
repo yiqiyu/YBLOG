@@ -1,0 +1,3 @@
+﻿您的博客有一个新留言！
+
+{{ name }}回复了您的博客，请点击此处{{ url_for('.message_board', _external=True)}}获得详细信息。

@@ -1,0 +1,4 @@
+YBLOG - 您有一个新回复！
+
+{{ name }}回复了您的博客，请打开下面链接获得详细信息：
+{{ url_for('.blog_post', id=post_id, page=page, _anchor=comment_index+'L', _external=True) }}

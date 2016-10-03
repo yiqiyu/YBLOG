@@ -203,3 +203,6 @@ div.flask-pagedown-preview {
 img {
     max-width: 750px;
 }
+.detail-post img {
+    max-width: 1027px;
+}

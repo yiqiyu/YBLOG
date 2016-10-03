@@ -4,18 +4,18 @@ Created on Thu Jun 23 21:43:00 2016
 
 @author: Administrator
 """
-import traceback
 #import logging
 
 from flask import render_template, redirect, url_for, abort, flash, request,\
     current_app, g
 from flask.ext.sqlalchemy import get_debug_queries
 import flask_sijax
+from flask.ext.login import current_user
 from pyquery import PyQuery as pq
 
 from . import main
-from .forms import SubscribeForm, CommentForm, ReplyForm, MessageForm
-from .. import db
+from ..functions import add_otherwise_rollback
+from .forms import SubscribeForm, CommentForm, ReplyForm, MessageForm, AdminForm
 from ..email import send_email
 from ..models import Follower, Comment, Post, Message
 
@@ -24,26 +24,6 @@ DEFAULT_REPLY_TO_ID = 1
 #logging.basicConfig(level=logging.INFO,  
 #                    filename='./log/test.log',  
 #                    filemode='w')  
-
-
-def add_otherwise_rollback(entity, message):
-    try:
-        db.session.add(entity)
-        db.session.commit()
-        flag = True
-        category = 'info'
-    except:
-        db.session.rollback()
-        message = u'Oops...我们的服务器貌似出了点问题，请重试'
-        category = 'error'
-        flag = False
-        if current_app.debug is True or current_app.testing is True:
-            with open("./log/log.txt",'a') as f:
-                traceback.print_exc(file=f)
-                f.flush()
-    finally:
-        flash(message, category)
-        return flag
 
 
 @main.after_app_request
@@ -117,6 +97,9 @@ def message_board():
                           email=form.email.data,
                           author_name=form.name.data)
         add_otherwise_rollback(message, u'感谢您的留言让我能做的更好！')
+        send_email(current_app.config['BLOG_MAIL_SENDER'], u'您有一个新留言！',
+                       'email/new_message', 
+                       name = form.name.data if hasattr(form, 'name') else u"您")
         return redirect(url_for('.message_board'))
     page = request.args.get('page', 1, type=int)
     query = Message.query
@@ -135,18 +118,19 @@ def message_board():
 #@main.route('/post/<int:id>', methods=['GET', 'POST'])
 def blog_post(id):
     post = Post.query.get_or_404(id)
-    form = CommentForm()
+    form = AdminForm() if current_user.is_authenticated else CommentForm()
     if form.validate_on_submit():
         default_reply_to = post.comments.order_by(Comment.timestamp.asc()).first()
-        comment_index = post.comments.count()
-        comment = Comment(body=form.body.data,
-                          post=post,
-                          email=form.email.data,
-                          reply_to=default_reply_to,
-                          comment_index=comment_index,
-                          author_name=form.name.data,
-                          email_remind=form.email_remind.data)
-        add_otherwise_rollback(comment, u'你的评论已被提交。')
+        comments_count = Comment.query.count()+1
+        post.add_comment(form, default_reply_to, current_user)
+        page = (comments_count-2) // \
+                    current_app.config['BLOG_COMMENTS_PER_PAGE'] + 1
+        send_email(current_app.config['BLOG_MAIL_SENDER'], u'您有一个新回复！',
+                       'email/new_reply_to_me', 
+                       name = form.name.data if hasattr(form, 'name') else u"您", 
+                       page=page,  
+                       post_id = post.id,
+                       comment_index=str(comments_count-1))
         return redirect(url_for('.blog_post', id=post.id, page=-1))
         
     if g.sijax.is_sijax_request:
@@ -169,26 +153,20 @@ def blog_post(id):
 @main.route('/reply/<int:id>', methods=['GET', 'POST'])
 def reply(id):
     reply_to = Comment.query.get_or_404(id) 
-    form = ReplyForm()
+    form = AdminForm() if current_user.is_authenticated else ReplyForm()
     if form.validate_on_submit():
         post = reply_to.post
-        comment_index = post.comments.count()
-        comment = Comment(post=post,
-                          comment_index=comment_index,
-                          reply_to=reply_to,
-                          body=form.body.data,
-                          email=form.email.data,
-                          author_name=form.name.data,
-                          email_remind=form.email_remind.data)
-        if add_otherwise_rollback(comment, u'您的回复已被提交。') and \
-            reply_to.email_remind:
-            page = (post.comments.count() - 2) // \
+        comment = post.add_comment(form, reply_to, current_user)        
+        if comment and reply_to.email_remind:
+            comments_count = comment.comment_index+1
+            page = (comments_count-2) // \
                     current_app.config['BLOG_COMMENTS_PER_PAGE'] + 1
             send_email(reply_to.email, u'您的评论有一个新回复！',
-                       'email/new_reply', name = reply_to.author_name, 
+                       'email/new_reply', 
+                       name = 'YYQ' if current_user.is_authenticated else form.name.data, 
                        page=page,  
                        post_id = post.id,
-                       comment_index=str(comment_index),
+                       comment_index=str(comments_count-1),
                        reply_to_id=reply_to.id)
         return redirect(url_for('.blog_post', id=post.id, page=-1))
     return render_template('reply.html', form=form, reply_to=reply_to)
@@ -196,7 +174,7 @@ def reply(id):
 
 def ajax_reply(obj_response, id):
     reply_to = Comment.query.get_or_404(id)
-    form = ReplyForm()
+    form = AdminForm() if current_user.is_authenticated else ReplyForm()
     template = render_template('reply.html', form=form, reply_to=reply_to)
     renderedForm = pq(template)
     obj_response.html_append("div.replyToggle", renderedForm(".ajax-reply").html())

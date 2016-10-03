@@ -13,9 +13,12 @@ from datetime import datetime
 from markdown import markdown
 import bleach
 from flask import url_for, current_app
+from flask.ext.login import UserMixin
 from app.exceptions import ValidationError
+from werkzeug.security import generate_password_hash, check_password_hash
 
-from . import db
+from . import db, login_manager
+from functions import add_otherwise_rollback
 from email import send_email
 
 
@@ -24,9 +27,11 @@ def db_rollback_if_fail(func):
     def wrapper(*args, **kw):
         try:
             func(*args, **kw)
-        except:
+            return True
+        except Exception:
             db.session.rollback()
             traceback.print_exc()
+            return False
     return wrapper
 
 
@@ -122,7 +127,25 @@ class Post(db.Model):
         to_be_deleted = set(post.id for post in Post.query.all())
         for pid in to_be_deleted:
             db.session.delete(Post.query.get(pid))
-        Post._parse_post_and_commit(blog_dir, os.listdir(blog_dir)) 
+        Post._parse_post_and_commit(blog_dir, os.listdir(blog_dir))
+
+        
+    def add_comment(self, form, reply_to, current_user):        
+        comment_index = self.comments.count()
+        if current_user.is_authenticated:
+            author_name = 'YYQ'
+            email = 'dante3@126.com'
+        else:
+            author_name = form.name.data
+            email = form.email.data
+        comment = Comment(body=form.body.data,
+                          post=self,
+                          email=email,
+                          reply_to=reply_to,
+                          comment_index=comment_index,
+                          author_name=author_name,
+                          email_remind=form.email_remind.data)
+        return comment if add_otherwise_rollback(comment, u'你的评论已被提交。') else False
 
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
@@ -153,24 +176,27 @@ class Comment(db.Model):
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
 
-    def to_json(self):
-        json_comment = {
-            'url': url_for('api.get_comment', id=self.id, _external=True),
-            'post': url_for('api.get_post', id=self.post_id, _external=True),
-            'body': self.body,
-            'body_html': self.body_html,
-            'timestamp': self.timestamp,
-            'author': url_for('api.get_user', id=self.author_id,
-                              _external=True),
-        }
-        return json_comment
-
-    @staticmethod
-    def from_json(json_comment):
-        body = json_comment.get('body')
-        if body is None or body == '':
-            raise ValidationError('comment does not have a body')
-        return Comment(body=body)
+#    def to_json(self):
+#        json_comment = {
+#            'url': url_for('api.get_comment', id=self.id, _external=True),
+#            'post': url_for('api.get_post', id=self.post_id, _external=True),
+#            'body': self.body,
+#            'body_html': self.body_html,
+#            'timestamp': self.timestamp
+#        }
+#        return json_comment
+#
+#    @staticmethod
+#    def from_json(json_comment):
+#        body = json_comment.get('body')
+#        if body is None or body == '':
+#            raise ValidationError('comment does not have a body')
+#        return Comment(body=body)
+        
+    @db_rollback_if_fail
+    def delete_comment(self):
+        db.session.delete(self)
+        db.session.commit()
 
 
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
@@ -194,24 +220,54 @@ class Message(db.Model):
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
 
-    def to_json(self):
-        json_comment = {
-            'url': url_for('api.get_comment', id=self.id, _external=True),
-            'post': url_for('api.get_post', id=self.post_id, _external=True),
-            'body': self.body,
-            'body_html': self.body_html,
-            'timestamp': self.timestamp,
-            'author': url_for('api.get_user', id=self.author_id,
-                              _external=True),
-        }
-        return json_comment
+#    def to_json(self):
+#        json_comment = {
+#            'url': url_for('api.get_comment', id=self.id, _external=True),
+#            'post': url_for('api.get_post', id=self.post_id, _external=True),
+#            'body': self.body,
+#            'body_html': self.body_html,
+#            'timestamp': self.timestamp,
+#            'author': url_for('api.get_user', id=self.author_id,
+#                              _external=True),
+#        }
+#        return json_comment
+#
+#    @staticmethod
+#    def from_json(json_comment):
+#        body = json_comment.get('body')
+#        if body is None or body == '':
+#            raise ValidationError('comment does not have a body')
+#        return Comment(body=body)
 
-    @staticmethod
-    def from_json(json_comment):
-        body = json_comment.get('body')
-        if body is None or body == '':
-            raise ValidationError('comment does not have a body')
-        return Comment(body=body)
+    @db_rollback_if_fail
+    def delete_message(self):
+        db.session.delete(self)
+        db.session.commit()
 
 
 db.event.listen(Message.body, 'set', Message.on_changed_body)
+
+
+class Administrator(UserMixin, db.Model):
+    __tablename__ = 'admin'
+    id = db.Column(db.Integer, primary_key=True)
+    password_hash = db.Column(db.String(128))
+    
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+        
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+        
+    def __init__(self, pwd):
+        self.password = pwd
+    
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Administrator.query.get(int(user_id))

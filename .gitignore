@@ -40,5 +40,10 @@ nosetests.xml
 
 # Virtual environment
 venv
+venv_linux
 
+my_pwd.py
 log
+tmp
+post
+
