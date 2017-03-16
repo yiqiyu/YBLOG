@@ -29,9 +29,11 @@ def db_rollback_if_fail(func):
             func(*args, **kw)
             return True
         except Exception:
-            db.session.rollback()
-            traceback.print_exc()
-            return False
+            try:
+                traceback.print_exc()
+                return False
+            finally:
+                db.session.rollback()
     return wrapper
 
 
@@ -113,11 +115,12 @@ class Post(db.Model):
         new_posts_ids = [Post.get_id(post) for post in posts]
         Post._parse_post_and_commit(blog_dir, posts)
         #邮件通知关注者有更新
-        for follower in Follower.query.all():
-            send_email(follower.email, u"您关注的博客有新更新啦！", 
-                       'email/new_posts', posts=[Post.query.get(id) for id in new_posts_ids],
-                       name=follower.name,
-                       follower_id=follower.id)
+        if new_posts_ids:
+            for follower in Follower.query.all():
+                send_email(follower.email, u"您关注的博客有新更新啦！",
+                           'email/new_posts', posts=[Post.query.get(id) for id in new_posts_ids],
+                           name=follower.name,
+                           follower_id=follower.id)
 
     @staticmethod
     @db_rollback_if_fail
@@ -129,8 +132,7 @@ class Post(db.Model):
             db.session.delete(Post.query.get(pid))
         Post._parse_post_and_commit(blog_dir, os.listdir(blog_dir))
 
-        
-    def add_comment(self, form, reply_to, current_user):        
+    def add_comment(self, form, reply_to, current_user):
         comment_index = self.comments.count()
         if current_user.is_authenticated:
             author_name = 'YYQ'

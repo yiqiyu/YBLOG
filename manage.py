@@ -80,7 +80,7 @@ def deploy():
     #add blogs
     Post.add_post()
     
-    #add admin
+    #add admin when no admin is presented
     if not Administrator.query.all():
         pwd = os.environ.get('ADMIN_PWD') or '1111'
         admin = Administrator(pwd)
