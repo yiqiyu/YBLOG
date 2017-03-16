@@ -88,31 +88,39 @@ class Post(db.Model):
             tags=allowed_tags, attributes=allowed_attributes, strip=False))
 
     @staticmethod
-    def get_id(post):
+    def extract_id(post):
         return (lambda x: int(os.path.splitext(x)[0].split("-")[0]))(post)
             
     @staticmethod
     def _parse_post_and_commit(blog_dir, posts):
+        all_ids = []
         for post in posts:
             with codecs.open(os.path.join(blog_dir, post), encoding='utf-8') as f:
                 file_name = os.path.splitext(post)[0].split("-")
                 id = int(file_name[0])
+                all_ids.append(id)
                 if current_app.debug is True or current_app.testing is True:
                     title = file_name[1].decode('gb2312').encode('utf-8')
                 else:
                     title = file_name[1]
                 body = f.read()
 #                print chardet.detect(title)
-                db.session.add(Post(id=id, title=title, body=body))
+                oldpost = Post.query.get(id)
+                if oldpost:
+                    oldpost.title = title
+                    oldpost.body = body
+                else:
+                    db.session.add(Post(id=id, title=title, body=body))
         db.session.commit()
+        return all_ids
          
     @staticmethod
     @db_rollback_if_fail  
     def add_post():
         blog_dir = current_app.config['BLOG_POSTS_DIR']
-        posts = [post for post in os.listdir(blog_dir)\
-                if not Post.query.get(Post.get_id(post))]
-        new_posts_ids = [Post.get_id(post) for post in posts]
+        posts = [post for post in os.listdir(blog_dir) \
+                 if not Post.query.get(Post.extract_id(post))]
+        new_posts_ids = [Post.extract_id(post) for post in posts]
         Post._parse_post_and_commit(blog_dir, posts)
         #邮件通知关注者有更新
         if new_posts_ids:
@@ -128,9 +136,10 @@ class Post(db.Model):
         blog_dir = current_app.config['BLOG_POSTS_DIR']
         #如果没在目录里出现的博文将被删除
         to_be_deleted = set(post.id for post in Post.query.all())
+        ids_remained = Post._parse_post_and_commit(blog_dir, os.listdir(blog_dir))
         for pid in to_be_deleted:
-            db.session.delete(Post.query.get(pid))
-        Post._parse_post_and_commit(blog_dir, os.listdir(blog_dir))
+            if pid not in ids_remained:
+                db.session.delete(Post.query.get(pid))
 
     def add_comment(self, form, reply_to, current_user):
         comment_index = self.comments.count()
