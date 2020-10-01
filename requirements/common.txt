@@ -1,7 +1,7 @@
 alembic==0.8.6
 bleach==1.4.3
 blinker==1.4
-flask==0.10.1
+flask==1.0
 Flask-Bootstrap==3.3.6.0
 Flask-Login==0.3.2
 Flask-Mail==0.9.1
