@@ -13,7 +13,7 @@ Flask-Sijax==0.4.1
 Flask-SQLAlchemy==2.1
 Flask-WTF==0.12
 itsdangerous==0.24
-jinja2==2.8
+jinja2==2.11.3
 Mako==1.0.4
 Markdown==2.6.6
 markupsafe==0.23
